@@ -1,13 +1,17 @@
 define([
            'dojo/_base/declare',
            'dojo/_base/array',
-           'JBrowse/View/FeatureGlyph/Box'
+           'JBrowse/View/FeatureGlyph/Box',
+           'JBrowse/Util'
        ],
        function(
            declare,
            array,
-           FeatureGlyph
+           FeatureGlyph,
+           Util
        ) {
+
+var dojof = Util.dojof;
 
 return declare( FeatureGlyph, {
 
@@ -20,16 +24,12 @@ return declare( FeatureGlyph, {
     },
 
     renderFeature: function( context, fRect ) {
-        //if( this.track.displayMode != 'collapsed' )
-         //   context.clearRect( Math.floor(fRect.l), fRect.t, Math.ceil(fRect.w-Math.floor(fRect.l)+fRect.l), fRect.h );
-
-
-        var p=fRect.f.get("genotypes");
-        var i=0;
-        var thisB=this;
-        Object.keys(p).forEach(function(key) {
+        var p = fRect.f.get("genotypes");
+        var i = 0;
+        var thisB = this;
+        dojof.keys(p).forEach(function(key) {
             var col;
-            var f=p[key];
+            var f = p[key];
             if(f.GT) {
                 var value_parse=f.GT.values[0];
                 var splitter = (value_parse.match(/[\|\/]/g)||[])[0];
