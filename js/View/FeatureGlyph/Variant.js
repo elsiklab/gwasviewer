@@ -1,12 +1,14 @@
 define([
            'dojo/_base/declare',
            'dojo/_base/array',
+           'dojo/_base/lang',
            'JBrowse/View/FeatureGlyph/Box',
            'JBrowse/Util'
        ],
        function(
            declare,
            array,
+           lang,
            FeatureGlyph,
            Util
        ) {
@@ -18,7 +20,7 @@ return declare( FeatureGlyph, {
     renderFeature: function( context, fRect ) {
         if( fRect.f.get("type") != "SNV" ) return null;
         var genotypes = fRect.f.get("genotypes");
-        dojof.keys(genotypes).forEach(function(key, i) {
+        dojof.keys(genotypes).forEach(function(key, ret) {
             var col;
             if( genotypes[key].GT ) {
                 var value_parse = genotypes[key].GT.values[0];
@@ -31,7 +33,10 @@ return declare( FeatureGlyph, {
                     col='#090';
             }
             else col='#090';
-            this.renderBox( context, fRect.viewInfo, fRect.f, i*6, 3, fRect.f, function() { return col; } );
+            //function( context, viewInfo, feature, top, overallHeight, parentFeature, style ) {
+            var style = lang.hitch( this, 'getStyle' );
+            var place = ret*style( fRect.f, 'height' );
+            this.renderBox( context, fRect.viewInfo, fRect.f, place, 1, fRect.f, function() { return col; } );
         }, this);
     }
 //    ,

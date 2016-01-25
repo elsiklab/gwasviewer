@@ -30,7 +30,7 @@ return declare( CanvasFeatures,
         var layout = this.inherited(arguments);
         return declare.safeMixin(layout, {
             addRect: function (id, left, right, height, data) {
-                this.pTotalHeight = Math.min( dojof.keys(data.get('genotypes')) * 5, thisB.maxHeight );
+                this.pTotalHeight = Math.min( dojof.keys(data.get('genotypes')).length * 4, this.maxHeight );
                 return this.pTotalHeight;
             }
         });
