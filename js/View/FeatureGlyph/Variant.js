@@ -35,8 +35,9 @@ return declare( FeatureGlyph, {
             else col='#090';
             //function( context, viewInfo, feature, top, overallHeight, parentFeature, style ) {
             var style = lang.hitch( this, 'getStyle' );
-            var place = ret*style( fRect.f, 'height' );
-            this.renderBox( context, fRect.viewInfo, fRect.f, place, 1, fRect.f, function() { return col; } );
+            var place1 = ret*style( fRect.f, 'height' );
+            var place2 = ret*style( fRect.f, 'spacer' );
+            this.renderBox( context, fRect.viewInfo, fRect.f, place2||place1, 1, fRect.f, function() { return col; } );
         }, this);
     }
 //    ,
