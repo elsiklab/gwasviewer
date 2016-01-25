@@ -19,6 +19,7 @@ return declare( FeatureGlyph, {
 
     renderFeature: function( context, fRect ) {
         if( fRect.f.get("type") != "SNV" ) return null;
+
         var genotypes = fRect.f.get("genotypes");
         dojof.keys(genotypes).forEach(function(key, ret) {
             var col;
@@ -40,19 +41,6 @@ return declare( FeatureGlyph, {
             this.renderBox( context, fRect.viewInfo, fRect.f, place2||place1, 1, fRect.f, function() { return col; } );
         }, this);
     }
-//    ,
-//    layoutFeature: function( viewArgs, layout, feature ) {
-//        var rect = this.inherited( arguments );
-//        if( ! rect ) {
-//            return rect;
-//        }
-//
-//        // need to set the top of the inner rect
-//        var len = dojof.keys(feature.get("genotypes")).length
-//        rect.rect.t=1000;
-//
-//        return rect;
-//    }
         
 });
 });

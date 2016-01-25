@@ -9,13 +9,13 @@ define( [
             declare,
             array,
             lang,
-            CanvasFeatures,
+            CanvasVariants,
             Util
         ) {
 
 var dojof = Util.dojof;
 
-return declare( CanvasFeatures,
+return declare( CanvasVariants,
 {
     
     _defaultConfig: function () {
