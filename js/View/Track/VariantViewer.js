@@ -19,20 +19,19 @@ return declare( CanvasFeatures,
 {
     
     _defaultConfig: function () {
-        console.log('here');
-        return dojo.mixin( dojo.clone( this.inherited(arguments), { "glyph": "VariantViewer/View/FeatureGlyph/Variants" }) );
+        var config = this.inherited(arguments);
+        config.glyph = "VariantViewer/View/FeatureGlyph/Variant";
+        return config;
     },
 
     // override getLayout to access addRect method
     _getLayout: function () {
         var thisB = this;
-        var browser = this.browser;
         var layout = this.inherited(arguments);
-        var clabel = this.name + "-collapsed";
         return declare.safeMixin(layout, {
             addRect: function (id, left, right, height, data) {
-                this.pTotalHeight = Math.max( dojof.keys(data.get('genotypes')) * 5, thisB.maxHeight );
-                return 0;
+                this.pTotalHeight = Math.min( dojof.keys(data.get('genotypes')) * 5, thisB.maxHeight );
+                return this.pTotalHeight;
             }
         });
     }
