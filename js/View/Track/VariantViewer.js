@@ -19,9 +19,14 @@ return declare( CanvasVariants,
 {
     
     _defaultConfig: function () {
-        var config = this.inherited(arguments);
-        config.glyph = "VariantViewer/View/FeatureGlyph/Variant";
-        return config;
+        return Util.deepUpdate(
+            lang.clone( this.inherited(arguments) ),
+            {
+                "glyph": "VariantViewer/View/FeatureGlyph/Variant",
+                "style": {
+                    "color": function(feat, gt, gt_full) { return gt=='ref'? 'blue': 'orange'; }
+                }
+            });
     },
 
     // override getLayout to access addRect method

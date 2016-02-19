@@ -16,8 +16,8 @@ define([
 var dojof = Util.dojof;
 
 return declare( FeatureGlyph, {
-    getColor: function( feature, genotype ) {
-        return this.getConf( 'style.color', [feature, genotype] )
+    getColor: function( feature, genotype, genotype_full ) {
+        return this.getConf( 'style.color', [feature, genotype, genotype_full] );
     },
     renderFeature: function( context, fRect ) {
         if( fRect.f.get("type") != "SNV" ) return null;
@@ -34,14 +34,13 @@ return declare( FeatureGlyph, {
                 var split = value_parse.split( splitter );
                 if( ( split[0]!=0   || split[1]!=0 ) &&
                     ( split[0]!='.' || split[1]!='.' ) ) {
-                    console.log('nonref',fRect.f);
-                    col=color( fRect.f, 'nonref',value_parse );
+                    col = color( fRect.f, 'alt', value_parse );
                 }
                 else {
-                    col=color( fRect.f, 'ref',value_parse );
+                    col = color( fRect.f, 'ref', value_parse );
                 }
             }
-            else col=color( fRect.f, 'ref' );
+            else col = color( fRect.f, 'ref' );
 
             var place1 = ret*style( fRect.f, 'height' );
             var place2 = ret*style( fRect.f, 'spacer' );
