@@ -32,8 +32,9 @@ return declare( FeatureGlyph, {
                 var value_parse = genotypes[key].GT.values[0];
                 var splitter = (value_parse.match(/[\|\/]/g)||[])[0];
                 var split = value_parse.split( splitter );
-                if( ( split[0]!=0   && split[1]!=0 ) &&
-                    ( split[0]!='.' && split[1]!='.' ) ) {
+                if( ( split[0]!=0   || split[1]!=0 ) &&
+                    ( split[0]!='.' || split[1]!='.' ) ) {
+                    console.log('nonref',fRect.f);
                     col=color( fRect.f, 'nonref',value_parse );
                 }
                 else {
