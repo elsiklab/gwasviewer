@@ -27,3 +27,26 @@ Example: if spacer is 2 and height is 1 then there will be 1 px between each sam
 ## Screenshot
 
 ![](img/example.png)
+
+
+# variantplotter
+
+## Example configuration
+
+      {
+         "displayMode" : "collapse",
+         "showLabels" : false,
+         "maxFeatureScreenDensity": 6,
+         "style" : {
+            "className" : "feature",
+            "color" : "function(feature) { return 'hsl('+(-Math.log(Math.abs(feature.get('score')))*5)+',50%,50%)'; }"
+         },
+         "storeClass" : "JBrowse/Store/SeqFeature/BEDTabix",
+         "urlTemplate" : "HDL_pval_name.sort.bed.gz",
+         "label" : "HDL_pvals",
+         "type" : "VariantViewer/View/Track/VariantPlotter"
+      }
+
+## Screenshot
+
+![](img/plotter.png)
