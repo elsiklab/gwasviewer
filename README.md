@@ -31,6 +31,13 @@ Example: if spacer is 2 and height is 1 then there will be 1 px between each sam
 
 # variantplotter
 
+
+## Options
+
+* heightScaler - Numerical value to collapse or exapand y-axis. No intrinsic meaning, just layout. Default: 10
+* maxHeight - Numerical value to set track height. Default: 210px
+* style->color - A color callback for the variables
+
 ## Example configuration
 
       {

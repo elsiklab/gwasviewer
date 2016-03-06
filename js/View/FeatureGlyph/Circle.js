@@ -12,12 +12,13 @@ return declare(Box, {
         var left  = viewInfo.block.bpToX( feature.get('start') );
 
         style = style || lang.hitch( this, 'getStyle' );
-        var width = style( feature, 'width') || 10;//viewInfo.block.bpToX( feature.get('end') ) - left;
+        var width = style( feature, 'width') || 10;
 
         var height = this._getFeatureHeight( viewInfo, feature );
         if( ! height )
             return;
-        top = 200+Math.log(feature.get('score'))*10;//Math.round( (overallHeight - height)/2 );
+        
+        top = this.config.maxHeight - width + (Math.log(feature.get('score')) * this.config.heightScaler);
 
         // background
         context.beginPath();

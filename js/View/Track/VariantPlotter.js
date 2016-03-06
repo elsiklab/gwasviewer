@@ -2,26 +2,30 @@ define( [
             'dojo/_base/declare',
             'dojo/_base/array',
             'dojo/_base/lang',
-            'JBrowse/View/Track/CanvasVariants',
+            'JBrowse/View/Track/CanvasFeatures',
             'JBrowse/Util'
         ],
         function(
             declare,
             array,
             lang,
-            CanvasVariants,
+            CanvasFeatures,
             Util
         ) {
 
 var dojof = Util.dojof;
 
-return declare( CanvasVariants,
+return declare( CanvasFeatures,
 {
     _defaultConfig: function () {
         return Util.deepUpdate(
             lang.clone( this.inherited(arguments) ),
             {
-                "glyph": "VariantViewer/View/FeatureGlyph/Circle"
+                glyph: "VariantViewer/View/FeatureGlyph/Circle",
+                maxHeight: 210,
+                width: 10,
+                heightScaler: 10,
+                displayMode: "collapse"
             });
     },
 
@@ -29,10 +33,11 @@ return declare( CanvasVariants,
     _getLayout: function () {
         var thisB = this;
         var layout = this.inherited(arguments);
+        var maxHeight = this.config.maxHeight;
         return declare.safeMixin(layout, {
             addRect: function (id, left, right, height, data) {
-                this.pTotalHeight = 210;
-                return this.pTotalHeight;
+                this.pTotalHeight = this.maxHeight;
+                return 0;
             }
         });
     }
