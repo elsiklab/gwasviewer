@@ -28,7 +28,9 @@ return declare( CanvasFeatures,
                 displayMode: "collapse",
                 style: {
                     color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 5 ) + ',50%,50%)'; },
-                    label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
+                    showLabels: false,
+                    // example to only show labels above a certain threshold
+                    //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
                 }
             });
     },
@@ -45,8 +47,21 @@ return declare( CanvasFeatures,
         var heightScaler = this.config.heightScaler;
         return declare.safeMixin(layout, {
             addRect: function (id, left, right, height, data) {
+                var pLeft   = Math.floor( left   / this.pitchX );
+                var pRight  = Math.floor( right  / this.pitchX );
+                var pHeight = Math.ceil(  height / this.pitchY );
+
+                var midX = Math.floor((pLeft+pRight)/2);
+                var y = maxHeight - 10 + ( Math.log(data.get('score')) * heightScaler );
                 this.pTotalHeight = this.maxHeight;
-                return maxHeight - 10 + ( Math.log(data.get('score')) * heightScaler );
+
+                var rectangle = { id: id, l: pLeft, r: pRight, mX: midX, h: pHeight, top: Math.floor(y/this.pitchY) };
+                if( data )
+                    rectangle.data = data;
+
+                this._addRectToBitmap(rectangle, data);
+                this.rectangles[id] = rectangle;
+                return y;
             }
         });
     }
