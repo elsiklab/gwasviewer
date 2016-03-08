@@ -3,6 +3,7 @@ define( [
             'dojo/_base/array',
             'dojo/_base/lang',
             'JBrowse/View/Track/CanvasFeatures',
+            'JBrowse/Model/SimpleFeature',
             'JBrowse/Util'
         ],
         function(
@@ -10,6 +11,7 @@ define( [
             array,
             lang,
             CanvasFeatures,
+            SimpleFeature,
             Util
         ) {
 
@@ -17,7 +19,91 @@ var dojof = Util.dojof;
 
 return declare( CanvasFeatures,
 {
+    processFeat: function( f ) {
+        var start = +f._id.match(/chr.*:g.([0-9]+)/)[1];
+        console.log('processFeat1',start,f);
+        var feature = new SimpleFeature({
+                id: f._id,
+                data: {
+                    start: start-1,
+                    end: start,
+                    id: f._id
+                }
+            });
+        console.log('processFeat',feature);
+
+        var process=function(str,data,plus) {
+            if(!data) return;
+
+            if(str.match(/snpeff/)){
+               if(lang.isArray(data['ann'])) {
+                   array.forEach(data['ann'],function(fm,i) { process(str+'_'+i,fm,i); });
+                   return;
+               }
+               else if(data['ann']) {
+                   delete data['ann'].cds;
+                   delete data['ann'].cdna;
+                   delete data['ann'].protein;
+               }
+               else {
+                   delete data.cds; // sub-sub-objects, not super informative
+                   delete data.cdna;
+                   delete data.protein;
+               }
+           }
+           if(str.match(/cadd/)) {
+               if(data['encode']) {
+                   process(str+'_encode',data['encode']);
+               }
+               delete data['encode'];
+           }
+           if(str.match(/grasp/)) {
+               if(lang.isArray(data['publication'])) {
+                   array.forEach(data['publication'],function(fm,i) { process(str+'_publication'+i,fm); });
+               }
+               delete data['publication'];
+           }
+           
+           feature.data[str+"_attrs"+(plus||"")]={};
+           var valkeys=array.filter( dojof.keys(data), function(key) {
+               return typeof data[key]!='object';
+           });
+
+           var objkeys=array.filter( dojof.keys(data), function(key) {
+               return typeof data[key]=='object' && key!='gene';
+           });
+
+           
+
+           array.forEach( valkeys, function(key) {
+               feature.data[str+"_attrs"+(plus||"")][key]=data[key];
+           });
+           array.forEach( objkeys, function(key) {
+               feature.data[str+"_"+key+(plus||"")]=data[key];
+           });
+        }
+        
+        process('cadd',f['cadd']);
+        process('cosmic',f['cosmic']);
+        process('dbnsfp',f['dbnsfp']);
+        process('dbsnp',f['dbsnp']);
+        process('evs',f['evs']);
+        process('exac',f['exac']);
+        process('mutdb',f['mutdb']);
+        process('wellderly',f['wellderly']);
+        process('snpedia',f['snpedia']);
+        process('snpeff',f['snpeff']);
+        process('vcf',f['vcf']);
+        process('grasp',f['grasp']);
+        process('gwascatalog',f['gwascatalog']);
+        process('docm',f['docm']);
+        process('emvclass',f['emvclass']);
+        process('clinvar',f['clinvar']);
+
+        return feature;
+    },
     _defaultConfig: function () {
+        var thisB = this;
         return Util.deepUpdate(
             lang.clone( this.inherited(arguments) ),
             {
@@ -28,9 +114,24 @@ return declare( CanvasFeatures,
                 displayMode: "collapse",
                 style: {
                     color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 5 ) + ',50%,50%)'; },
-                    showLabels: false,
+                    showLabels: false
                     // example to only show labels above a certain threshold
                     //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
+                },
+                onClick: {
+                    content: function(track,feature) {
+                        return dojo.xhrGet({
+                            url:'http://myvariant.info/v1/query?q='+feature.get('name'),
+                            handleAs: 'json'
+                        }).then(function(res) {
+                            console.log('here0!',res,res.hits[0]);
+                            var feat = thisB.processFeat(res.hits[0]);
+                            console.log('here1!',feat);
+                            var content = track.defaultFeatureDetail(track,feat);
+                            console.log('here2!',content);
+                            return content;
+                        });
+                    }
                 }
             });
     },
