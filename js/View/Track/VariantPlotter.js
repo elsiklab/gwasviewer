@@ -21,8 +21,7 @@ return declare( CanvasFeatures,
 {
     _defaultConfig: function () {
         var thisB = this;
-        var config = Util.deepUpdate(
-            lang.clone( this.inherited(arguments) ),
+        return Util.deepUpdate(lang.clone(this.inherited(arguments)),
             {
                 glyph: "VariantViewer/View/FeatureGlyph/Circle",
                 maxHeight: 210,
@@ -30,29 +29,32 @@ return declare( CanvasFeatures,
                 heightScaler: 1,
                 useYAxis: true,
                 displayMode: "collapse",
+                useMyVariantInfo: false,
                 style: {
                     color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 1.8 ) + ',50%,50%)'; },
                     showLabels: false
                     // example to only show labels above a certain threshold
                     //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
                 },
-                
-            });
-
-        if (config.useMyVariantInfo) {
-            config.onClick = {
-                content: function (track,feature) {
-                    return dojo.xhrGet({
-                        url:'http://myvariant.info/v1/query?q='+feature.get('name'),
-                        handleAs: 'json'
-                    }).then(function(res) {
-                        var feat = thisB.processFeat(res.hits[0]);
-                        var content = track.defaultFeatureDetail(track,feat);
-                        return content;
-                    });
+                onClick: {
+                    content: function (track,feature,featDiv,container) {
+                        if(track.config.useMyVariantInfo) {
+                            console.log('here');
+                            return dojo.xhrGet({
+                                url:'http://myvariant.info/v1/query?q='+feature.get('name'),
+                                handleAs: 'json'
+                            }).then(function(res) {
+                                var feat = thisB.processFeat(res.hits[0]);
+                                var content = track.defaultFeatureDetail(track,feat);
+                                return content;
+                            });
+                        }
+                        else {
+                            return track.defaultFeatureDetail(track,feature,featDiv,container);
+                        }
+                    }
                 }
-            };
-        }
+            });
     },
     fillBlock: function(args) {
         this.inherited(arguments);
