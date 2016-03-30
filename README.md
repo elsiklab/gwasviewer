@@ -10,6 +10,8 @@ A JBrowse plugin that adds some custom glyphs for variants
 * style->color - A color callback for the variables
 * style->label - A string or callback for the feature label. Can be useful to only show labels above a certain score, e.g. `"style": { "label": "function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }"`
 * showLabels - False by default
+* useMyVariantInfo - Clicking on variant launches myvariant.info popup. Default: false
+
 
 ## Example configuration
 

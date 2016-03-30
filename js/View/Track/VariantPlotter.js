@@ -19,9 +19,79 @@ var dojof = Util.dojof;
 
 return declare( CanvasFeatures,
 {
+    _defaultConfig: function () {
+        var thisB = this;
+        return Util.deepUpdate(lang.clone(this.inherited(arguments)),
+            {
+                glyph: "VariantViewer/View/FeatureGlyph/Circle",
+                maxHeight: 210,
+                width: 10,
+                heightScaler: 1,
+                useYAxis: true,
+                displayMode: "collapse",
+                useMyVariantInfo: false,
+                style: {
+                    color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 1.8 ) + ',50%,50%)'; },
+                    showLabels: false
+                    // example to only show labels above a certain threshold
+                    //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
+                },
+                onClick: {
+                    content: function (track,feature,featDiv,container) {
+                        if(track.config.useMyVariantInfo) {
+                            console.log('here');
+                            return dojo.xhrGet({
+                                url:'http://myvariant.info/v1/query?q='+feature.get('name'),
+                                handleAs: 'json'
+                            }).then(function(res) {
+                                var feat = thisB.processFeat(res.hits[0]);
+                                var content = track.defaultFeatureDetail(track,feat);
+                                return content;
+                            });
+                        }
+                        else {
+                            return track.defaultFeatureDetail(track,feature,featDiv,container);
+                        }
+                    }
+                }
+            });
+    },
+    fillBlock: function(args) {
+        this.inherited(arguments);
+
+        if(this.config.useYAxis) {
+            this.makeHistogramYScale( this.config.maxHeight, 0, this.config.maxHeight/this.config.heightScaler );
+        }
+    },
+
+    // override getLayout to access addRect method
+    _getLayout: function () {
+        var thisB = this;
+        var layout = this.inherited(arguments);
+        var maxHeight = this.config.maxHeight;
+        var heightScaler = this.config.heightScaler;
+        return declare.safeMixin(layout, {
+            addRect: function (id, left, right, height, data) {
+                var pLeft   = Math.floor( left   / this.pitchX );
+                var pRight  = Math.floor( right  / this.pitchX );
+                var pHeight = Math.ceil(  height / this.pitchY );
+
+                var midX = Math.floor((pLeft+pRight)/2);
+                var y = maxHeight - 10 + ( Math.log(data.get('score')) * heightScaler );
+                this.pTotalHeight = this.maxHeight;
+
+                var rectangle = { id: id, l: pLeft, r: pRight, mX: midX, h: pHeight, top: Math.floor(y/this.pitchY) };
+                if( data )
+                    rectangle.data = data;
+
+                this._addRectToBitmap(rectangle, data);
+                this.rectangles[id] = rectangle;
+                return y;
+            }
+        });
+    },
     processFeat: function( f ) {
         var start = +f._id.match(/chr.*:g.([0-9]+)/)[1];
-        console.log('processFeat1',start,f);
         var feature = new SimpleFeature({
                 id: f._id,
                 data: {
@@ -30,7 +100,6 @@ return declare( CanvasFeatures,
                     id: f._id
                 }
             });
-        console.log('processFeat',feature);
 
         var process=function(str,data,plus) {
             if(!data) return;
@@ -56,6 +125,13 @@ return declare( CanvasFeatures,
                    process(str+'_encode',data['encode']);
                }
                delete data['encode'];
+           }
+           if(str.match(/clinvar/)) {
+               process(str+'_hgvs', data['hgvs']);
+               delete data['hgvs'];
+               if(lang.isArray(data['rcv'])) array.forEach(data['rcv'], function(elt,i) { process(str+'_rcv'+i, elt); });
+               else process(str+'_rcv', data['rcv']);
+               delete data['rcv'];
            }
            if(str.match(/grasp/)) {
                if(lang.isArray(data['publication'])) {
@@ -95,76 +171,14 @@ return declare( CanvasFeatures,
         process('snpeff',f['snpeff']);
         process('vcf',f['vcf']);
         process('grasp',f['grasp']);
-        process('gwascatalog',f['gwascatalog']);
+        process('gwassnps',f['gwassnps']);
         process('docm',f['docm']);
-        process('emvclass',f['emvclass']);
+        process('emv',f['emv']);
         process('clinvar',f['clinvar']);
 
         return feature;
-    },
-    _defaultConfig: function () {
-        var thisB = this;
-        return Util.deepUpdate(
-            lang.clone( this.inherited(arguments) ),
-            {
-                glyph: "VariantViewer/View/FeatureGlyph/Circle",
-                maxHeight: 210,
-                width: 10,
-                heightScaler: 1,
-                displayMode: "collapse",
-                style: {
-                    color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 5 ) + ',50%,50%)'; },
-                    showLabels: false
-                    // example to only show labels above a certain threshold
-                    //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
-                },
-                onClick: {
-                    content: function(track,feature) {
-                        return dojo.xhrGet({
-                            url:'http://myvariant.info/v1/query?q='+feature.get('name'),
-                            handleAs: 'json'
-                        }).then(function(res) {
-                            console.log('here0!',res,res.hits[0]);
-                            var feat = thisB.processFeat(res.hits[0]);
-                            console.log('here1!',feat);
-                            var content = track.defaultFeatureDetail(track,feat);
-                            console.log('here2!',content);
-                            return content;
-                        });
-                    }
-                }
-            });
-    },
-    fillBlock: function(args) {
-        this.inherited(arguments);
-        this.makeHistogramYScale( this.config.maxHeight, 0, this.config.maxHeight/this.config.heightScaler );
-    },
-
-    // override getLayout to access addRect method
-    _getLayout: function () {
-        var thisB = this;
-        var layout = this.inherited(arguments);
-        var maxHeight = this.config.maxHeight;
-        var heightScaler = this.config.heightScaler;
-        return declare.safeMixin(layout, {
-            addRect: function (id, left, right, height, data) {
-                var pLeft   = Math.floor( left   / this.pitchX );
-                var pRight  = Math.floor( right  / this.pitchX );
-                var pHeight = Math.ceil(  height / this.pitchY );
-
-                var midX = Math.floor((pLeft+pRight)/2);
-                var y = maxHeight - 10 + ( Math.log(data.get('score')) * heightScaler );
-                this.pTotalHeight = this.maxHeight;
-
-                var rectangle = { id: id, l: pLeft, r: pRight, mX: midX, h: pHeight, top: Math.floor(y/this.pitchY) };
-                if( data )
-                    rectangle.data = data;
-
-                this._addRectToBitmap(rectangle, data);
-                this.rectangles[id] = rectangle;
-                return y;
-            }
-        });
     }
+
+
 });
 });
