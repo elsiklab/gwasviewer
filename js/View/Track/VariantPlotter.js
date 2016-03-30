@@ -21,7 +21,7 @@ return declare( CanvasFeatures,
 {
     _defaultConfig: function () {
         var thisB = this;
-        return Util.deepUpdate(
+        var config = Util.deepUpdate(
             lang.clone( this.inherited(arguments) ),
             {
                 glyph: "VariantViewer/View/FeatureGlyph/Circle",
@@ -36,19 +36,23 @@ return declare( CanvasFeatures,
                     // example to only show labels above a certain threshold
                     //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
                 },
-                onClick: {
-                    content: function(track,feature) {
-                        return dojo.xhrGet({
-                            url:'http://myvariant.info/v1/query?q='+feature.get('name'),
-                            handleAs: 'json'
-                        }).then(function(res) {
-                            var feat = thisB.processFeat(res.hits[0]);
-                            var content = track.defaultFeatureDetail(track,feat);
-                            return content;
-                        });
-                    }
-                }
+                
             });
+
+        if (config.useMyVariantInfo) {
+            config.onClick = {
+                content: function (track,feature) {
+                    return dojo.xhrGet({
+                        url:'http://myvariant.info/v1/query?q='+feature.get('name'),
+                        handleAs: 'json'
+                    }).then(function(res) {
+                        var feat = thisB.processFeat(res.hits[0]);
+                        var content = track.defaultFeatureDetail(track,feat);
+                        return content;
+                    });
+                }
+            };
+        }
     },
     fillBlock: function(args) {
         this.inherited(arguments);
