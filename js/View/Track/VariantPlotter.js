@@ -28,9 +28,10 @@ return declare( CanvasFeatures,
                 maxHeight: 210,
                 width: 10,
                 heightScaler: 1,
+                useYAxis: true,
                 displayMode: "collapse",
                 style: {
-                    color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 5 ) + ',50%,50%)'; },
+                    color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 1.8 ) + ',50%,50%)'; },
                     showLabels: false
                     // example to only show labels above a certain threshold
                     //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
@@ -51,7 +52,10 @@ return declare( CanvasFeatures,
     },
     fillBlock: function(args) {
         this.inherited(arguments);
-        this.makeHistogramYScale( this.config.maxHeight, 0, this.config.maxHeight/this.config.heightScaler );
+
+        if(this.config.useYAxis) {
+            this.makeHistogramYScale( this.config.maxHeight, 0, this.config.maxHeight/this.config.heightScaler );
+        }
     },
 
     // override getLayout to access addRect method

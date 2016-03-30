@@ -12,8 +12,9 @@ define([
 return declare(Box, {
 
     renderFeature: function( context, fRect ) {
-//        if( this.track.displayMode != 'collapsed' )
-//            context.clearRect( Math.floor(fRect.l), fRect.t, Math.ceil(fRect.w-Math.floor(fRect.l)+fRect.l), fRect.h );
+        //don't clear non-rectangular glyph
+        //if( this.track.displayMode != 'collapsed' )
+        //   context.clearRect( Math.floor(fRect.l), fRect.t, Math.ceil(fRect.w-Math.floor(fRect.l)+fRect.l), fRect.h );
 
 
         var style = lang.hitch( this, 'getStyle' );
@@ -23,7 +24,6 @@ return declare(Box, {
         this.renderArrowhead( context, fRect );
     },
     renderBox: function( context, viewInfo, feature, top, overallHeight, parentFeature, style ) {
-
         var left  = viewInfo.block.bpToX( feature.get('start') );
         var width = style( feature, 'width') || 10;
 
@@ -33,11 +33,11 @@ return declare(Box, {
         
         // background
         context.beginPath();
+        context.lineWidth = 0;
+        context.strokeStyle = style( feature, 'borderColor');
         context.arc(left+width/2, top+width/2, width/2, 0, 2 * Math.PI, false);
         context.fillStyle = style( feature, 'color' );
         context.fill();
-        context.lineWidth = 0;
-        context.strokeStyle = style( feature, 'borderColor');
         context.stroke();
     }
 
