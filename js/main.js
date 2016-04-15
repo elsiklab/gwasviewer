@@ -12,7 +12,7 @@ return declare( JBrowsePlugin,
         var browser = args.browser;
 
         // do anything you need to initialize your plugin here
-        console.log( "VariantViewer plugin starting" );
+        console.log( "GWAS plugin starting" );
 
     }
 });

@@ -13,7 +13,7 @@ var profile = {
 
     basePath: '../../../src',
     packages: [
-        {name: 'VariantViewer', location: '../plugins/VariantViewer/js' }
+        {name: 'GWASViewer', location: '../plugins/GWASViewer/js' }
     ],
 
     layerOptimize: 'closure',
@@ -21,9 +21,9 @@ var profile = {
     selectorEngine: 'acme',
 
     layers: {
-        'VariantViewer/main': {
+        'GWASViewer/main': {
             include: [
-                'VariantViewer',
+                'GWASViewer',
             ],
             exclude: [ 'JBrowse' ]
         }
@@ -56,7 +56,7 @@ var profile = {
 
         // Files that should not be copied when the “mini” compiler flag is set to true.
         miniExclude: function (filename, mid) {
-            return ! ( /^VariantViewer/.test(mid) );
+            return ! ( /^GWASViewer/.test(mid) );
         }
     }
 };

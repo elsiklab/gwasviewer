@@ -23,7 +23,7 @@ return declare( CanvasFeatures,
         var thisB = this;
         return Util.deepUpdate(lang.clone(this.inherited(arguments)),
             {
-                glyph: "VariantViewer/View/FeatureGlyph/Circle",
+                glyph: "GWASViewer/View/FeatureGlyph/Circle",
                 maxHeight: 210,
                 width: 10,
                 heightScaler: 1,

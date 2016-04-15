@@ -1,6 +1,6 @@
-# variantviewer
+# gwasviewer
 
-A JBrowse plugin that adds some custom glyphs for variants
+A JBrowse plugin that adds some custom glyphs for variants and GWAS data
 
 
 ## Options
@@ -20,7 +20,7 @@ A JBrowse plugin that adds some custom glyphs for variants
          "storeClass" : "JBrowse/Store/SeqFeature/BEDTabix",
          "urlTemplate" : "HDL_pval_name.sort.bed.gz",
          "label" : "HDL_pvals",
-         "type" : "VariantViewer/View/Track/VariantPlotter"
+         "type" : "GWASViewer/View/Track/VariantPlotter"
       }
 
 ## Screenshot
