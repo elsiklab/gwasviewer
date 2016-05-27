@@ -68,7 +68,7 @@ return declare( CanvasFeatures,
         var layout = this.inherited(arguments);
         var maxHeight = this.config.maxHeight;
         var heightScaler = this.config.heightScaler;
-        var getScore = this.config.scoreFun||function(data) { return Math.log(data.get('score')); };
+        var getScore = this.config.scoreFun||function(data) { return -Math.log(data.get('score')); };
         return declare.safeMixin(layout, {
             addRect: function (id, left, right, height, data) {
                 var pLeft   = Math.floor( left   / this.pitchX );
@@ -76,7 +76,7 @@ return declare( CanvasFeatures,
                 var pHeight = Math.ceil(  height / this.pitchY );
 
                 var midX = Math.floor((pLeft+pRight)/2);
-                var y = maxHeight - 10 + ( getScore(data) * heightScaler );
+                var y = maxHeight - 10 + ( -getScore(data) * heightScaler );
                 this.pTotalHeight = this.maxHeight;
 
                 var rectangle = { id: id, l: pLeft, r: pRight, mX: midX, h: pHeight, top: Math.floor(y/this.pitchY) };
