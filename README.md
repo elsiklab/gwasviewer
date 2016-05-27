@@ -12,6 +12,7 @@ A JBrowse plugin that adds some custom glyphs for variants and GWAS data
 * useYAxis - Shows a y-axis bar. Default: true
 * style->color - A color callback for the variables
 * style->label - A string or callback for the feature label.
+* scoreFun - A function to give the score for the graph. Default: "function(feature) { Math.log(feature.get('score')) }", can define similar in config file
 
 Note for style->label: Can be useful to only show labels above a certain score, e.g. 
 

@@ -1,4 +1,4 @@
-define( [
+define( "GWASViewer/View/Track/VariantPlotter", [
             'dojo/_base/declare',
             'dojo/_base/array',
             'dojo/_base/lang',
@@ -33,8 +33,6 @@ return declare( CanvasFeatures,
                 style: {
                     color: function(feature) { return 'hsl(' + ( -Math.log(feature.get('score')) * 1.8 ) + ',50%,50%)'; },
                     showLabels: false
-                    // example to only show labels above a certain threshold
-                    //label: function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }
                 },
                 onClick: {
                     content: function (track,feature,featDiv,container) {
@@ -70,6 +68,7 @@ return declare( CanvasFeatures,
         var layout = this.inherited(arguments);
         var maxHeight = this.config.maxHeight;
         var heightScaler = this.config.heightScaler;
+        var getScore = this.config.scoreFun||function(data) { return Math.log(data.get('score')); };
         return declare.safeMixin(layout, {
             addRect: function (id, left, right, height, data) {
                 var pLeft   = Math.floor( left   / this.pitchX );
@@ -77,7 +76,7 @@ return declare( CanvasFeatures,
                 var pHeight = Math.ceil(  height / this.pitchY );
 
                 var midX = Math.floor((pLeft+pRight)/2);
-                var y = maxHeight - 10 + ( Math.log(data.get('score')) * heightScaler );
+                var y = maxHeight - 10 + ( getScore(data) * heightScaler );
                 this.pTotalHeight = this.maxHeight;
 
                 var rectangle = { id: id, l: pLeft, r: pRight, mX: midX, h: pHeight, top: Math.floor(y/this.pitchY) };
