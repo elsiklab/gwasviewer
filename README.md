@@ -23,10 +23,23 @@ Note for style->label: Can be useful to only show labels above a certain score, 
 
 ## Example configuration
 
+Using the "BEDTabix" class
+
+
       {
          "maxFeatureScreenDensity": 6,
          "storeClass" : "JBrowse/Store/SeqFeature/BEDTabix",
          "urlTemplate" : "HDL_pval_name.sort.bed.gz",
+         "label" : "HDL_pvals",
+         "type" : "GWASViewer/View/Track/VariantPlotter"
+      }
+
+Using a track loaded with flatfile-to-json.pl (flatfile-to-json.pl can load gff or bed with a score column)
+
+      {
+         "maxFeatureScreenDensity": 6,
+         "storeClass" : "JBrowse/Store/SeqFeature/NCList",
+         "urlTemplate" : "tracks/HDL_pval_name/{refseq}/trackData.json",
          "label" : "HDL_pvals",
          "type" : "GWASViewer/View/Track/VariantPlotter"
       }
@@ -37,4 +50,10 @@ Note for style->label: Can be useful to only show labels above a certain score, 
 
 
 
+## Install
 
+- Clone repo into plugins folder in JBrowse and name folder GWASViewer
+- Add "plugins": ["GWASViewer"] to trackList.json or jbrowse_conf.json
+
+
+Still in beta! Feel free to provide feedback
