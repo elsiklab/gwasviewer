@@ -12,11 +12,6 @@ define([
 return declare(Box, {
 
     renderFeature: function( context, fRect ) {
-        //don't clear non-rectangular glyph
-        //if( this.track.displayMode != 'collapsed' )
-        //   context.clearRect( Math.floor(fRect.l), fRect.t, Math.ceil(fRect.w-Math.floor(fRect.l)+fRect.l), fRect.h );
-
-
         var style = lang.hitch( this, 'getStyle' );
         this.renderBox( context, fRect.viewInfo, fRect.f, fRect.t, fRect.rect.h, fRect.f, style );
         this.renderLabel( context, fRect );
@@ -28,14 +23,15 @@ return declare(Box, {
         var width = style( feature, 'width') || 10;
 
         var height = this._getFeatureHeight( viewInfo, feature );
-        if( ! height )
+        if( !height ) {
             return;
-        
-        // background
+        }
+
+        // Background
         context.beginPath();
         context.lineWidth = 0;
         context.strokeStyle = style( feature, 'borderColor');
-        context.arc(left+width/2, top+width/2, width/2, 0, 2 * Math.PI, false);
+        context.arc(left + width / 2, top + width / 2, width / 2, 0, 2 * Math.PI, false);
         context.fillStyle = style( feature, 'color' );
         context.fill();
         context.stroke();

@@ -11,8 +11,12 @@ return declare( JBrowsePlugin,
     constructor: function( args ) {
         var browser = args.browser;
 
-        // do anything you need to initialize your plugin here
-        console.log( "GWAS plugin starting" );
+        // Do anything you need to initialize your plugin here
+        console.log( 'GWAS plugin starting' );
+        browser.registerTrackType({
+            label: 'GWASViewer',
+            type: 'GWASViewer/View/Track/VariantPlotter'
+        });
 
     }
 });
