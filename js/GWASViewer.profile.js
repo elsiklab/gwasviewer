@@ -56,7 +56,7 @@ var profile = {
 
         // Files that should not be copied when the “mini” compiler flag is set to true.
         miniExclude: function(filename, mid) {
-            return !( /^GWASViewer/.test(mid) );
+            return !(/^GWASViewer/.test(mid));
         }
     }
 };
