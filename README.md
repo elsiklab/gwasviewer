@@ -34,7 +34,7 @@ Using the "BEDTabix" class
          "type" : "GWASViewer/View/Track/VariantPlotter"
       }
 
-Using a track loaded with flatfile-to-json.pl (flatfile-to-json.pl can load gff or bed with a score column)
+Using a track loaded with flatfile-to-json.pl (GWASViewer can load GFF file with scores, or a BED with a score column)
 
       {
          "maxFeatureScreenDensity": 6,
@@ -43,6 +43,8 @@ Using a track loaded with flatfile-to-json.pl (flatfile-to-json.pl can load gff 
          "label" : "HDL_pvals",
          "type" : "GWASViewer/View/Track/VariantPlotter"
       }
+
+Note you can use flatfile-to-json.pl with --trackType "GWASViewer/View/Track/VariantPlotter" to automatically set this up
 
 ## Screenshot
 
@@ -57,3 +59,7 @@ Using a track loaded with flatfile-to-json.pl (flatfile-to-json.pl can load gff 
 
 
 Still in beta! Feel free to provide feedback
+
+## Test data
+
+A sample dataset is in test/data/ go to http://localhost/jbrowse/?data=plugins/GWASViewer/test/data or similar to view

@@ -1,0 +1,20 @@
+{
+   "plugins" : [
+      "GWASViewer"
+   ],
+   "formatVersion" : 1,
+   "tracks" : [
+      {
+         "trackType" : "GWASViewer/View/Track/VariantPlotter",
+         "type" : "GWASViewer/View/Track/VariantPlotter",
+         "urlTemplate" : "tracks/GIANT_BMI_GWAS/{refseq}/trackData.json",
+         "label" : "GIANT_BMI_GWAS",
+         "style" : {
+            "className" : "feature"
+         },
+         "key" : "GIANT_BMI_GWAS",
+         "storeClass" : "JBrowse/Store/SeqFeature/NCList",
+         "compress" : 0
+      }
+   ]
+}

@@ -26,7 +26,7 @@ function(
                     useYAxis: true,
                     displayMode: 'collapse',
                     useMyVariantInfo: false,
-                    maxFeatureScreenDensity: 10,
+                    maxFeatureScreenDensity: 50,
                     style: {
                         color: function(feature) { return 'hsl(' + (-Math.log(feature.get('score')) * 1.8) + ',50%,50%)'; },
                         showLabels: false,
