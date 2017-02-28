@@ -23,9 +23,15 @@ function (
             this.featMap = {};
         },
         _defaultConfig: function () {
+            var thisB = this;
             return Util.deepUpdate(lang.clone(this.inherited(arguments)),
                 {
-                    glyph: 'GWASViewer/View/FeatureGlyph/Circle',
+                    glyph: function(feat) {
+                        if(feat.get('name') == thisB.curr) {
+                            return 'GWASViewer/View/FeatureGlyph/Diamond';
+                        }
+                        return 'GWASViewer/View/FeatureGlyph/Circle'
+                    },
                     maxHeight: 210,
                     width: 10,
                     heightScaler: 1,
@@ -43,6 +49,7 @@ function (
                             var track = this.track;
                             var d;
                             if (track.config.useEnsemblR2) {
+                                track.curr = feature.get('name');
                                 d = new Dialog({ content: 'Waiting for Ensembl LD REST API...', title: 'GWASViewer' });
                                 d.show();
                                 request(track.config.useEnsemblURL + feature.get('name') + track.config.useEnsemblArgs, {
@@ -86,7 +93,17 @@ function (
                     style: {
                         color: function (feature, label, glyph, track) {
                             if (Object.keys(track.featMap).length) {
-                                return 'hsl(' + (track.featMap[feature.get('name')] * 220 || 0) + ',50%,50%)';
+                                var n = feature.get('name');
+                                if(n == track.curr) {
+                                    return 'pink';
+                                }
+                                var r = track.featMap[n];
+                                if (!r) return 'grey';
+                                if (r < 0.2) { return 'hsl(220,50%,50%)'; }
+                                if (r < 0.4) { return 'hsl(165,50%,50%)'; }
+                                if (r < 0.6) { return 'hsl(110,50%,50%)'; }
+                                if (r < 0.8) { return 'hsl(55,50%,50%)'; }
+                                return 'hsl(0,50%,50%)';
                             }
                             return 'hsl(' + (-Math.log(feature.get('score')) * 1.8) + ',50%,50%)';
                         },
@@ -100,6 +117,54 @@ function (
 
             if (this.config.useYAxis) {
                 this.makeHistogramYScale(this.config.maxHeight, 0, this.config.maxHeight / this.config.heightScaler);
+            }
+        },
+
+        updateStaticElements: function () {
+            this.inherited(arguments);
+            if (Object.keys(this.featMap).length) {
+                var context = this.staticCanvas.getContext('2d');
+                context.fillStyle = 'black';
+                context.font = 'normal 12px sans-serif';
+                context.fillText('r²', this.staticCanvas.width - 50, 15);
+                context.translate(0, 20);
+                context.fillText('0-0.2', this.staticCanvas.width - 93, 10);
+                context.fillText('0.2-0.4', this.staticCanvas.width - 93, 20);
+                context.fillText('0.4-0.6', this.staticCanvas.width - 93, 30);
+                context.fillText('0.6-0.8', this.staticCanvas.width - 93, 40);
+                context.fillText('0.8-1', this.staticCanvas.width - 93, 50);
+                context.fillText('undef', this.staticCanvas.width - 93, 60);
+                context.beginPath();
+                context.strokeStyle = 'black';
+                context.rect(this.staticCanvas.width - 50, 0, 30, 10);
+                context.fillStyle = 'hsl(220,50%,50%)';
+                context.fill();
+                context.stroke();
+                context.beginPath();
+                context.rect(this.staticCanvas.width - 50, 10, 30, 10);
+                context.fillStyle = 'hsl(165,50%,50%)';
+                context.fill();
+                context.stroke();
+                context.beginPath();
+                context.rect(this.staticCanvas.width - 50, 20, 30, 10);
+                context.fillStyle = 'hsl(110,50%,50%)';
+                context.fill();
+                context.stroke();
+                context.beginPath();
+                context.rect(this.staticCanvas.width - 50, 30, 30, 10);
+                context.fillStyle = 'hsl(55,50%,50%)';
+                context.fill();
+                context.stroke();
+                context.beginPath();
+                context.rect(this.staticCanvas.width - 50, 40, 30, 10);
+                context.fillStyle = 'hsl(0,50%,50%)';
+                context.fill();
+                context.stroke();
+                context.beginPath();
+                context.rect(this.staticCanvas.width - 50, 50, 30, 10);
+                context.fillStyle = 'grey';
+                context.fill();
+                context.stroke();
             }
         },
 

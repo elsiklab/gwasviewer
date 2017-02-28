@@ -1,6 +1,7 @@
 # Version 0.3.0
 
-- Allow getting LD R^2 color function from Ensembl
+- Allow getting LD R^2 color function from Ensembl with useEnsemblR2
+- Fix useMyVariantInfo popup
 
 # Version 0.2.0
 

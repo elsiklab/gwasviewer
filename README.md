@@ -68,7 +68,7 @@ Basic GWASViewer track
 
 ![](img/ensembl.png)
 
-Shows dialog waiting for Ensembl LD REST API which colors variants according to R^2 data when you click on a given variant (the coloring by R^2 is shown underneath the dialog too)
+Shows track with `useEnsemblR2` enabled, which fetches R^2 from Ensembl for variants in linkage with a variant that is clicked (pink diamond)
 
 ## Install
 
