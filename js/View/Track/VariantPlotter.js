@@ -2,21 +2,27 @@ define([
     'dojo/_base/declare',
     'dojo/_base/array',
     'dojo/_base/lang',
+    'dojo/request',
+    'dijit/Dialog',
     'JBrowse/View/Track/CanvasFeatures',
     'JBrowse/Model/SimpleFeature',
     'JBrowse/Util'
 ],
-function(
+function (
     declare,
     array,
     lang,
+    request,
+    Dialog,
     CanvasFeatures,
     SimpleFeature,
     Util
 ) {
     return declare(CanvasFeatures, {
-        _defaultConfig: function() {
-            var thisB = this;
+        constructor: function () {
+            this.featMap = {};
+        },
+        _defaultConfig: function () {
             return Util.deepUpdate(lang.clone(this.inherited(arguments)),
                 {
                     glyph: 'GWASViewer/View/FeatureGlyph/Circle',
@@ -26,33 +32,70 @@ function(
                     useYAxis: true,
                     displayMode: 'collapse',
                     useMyVariantInfo: false,
+                    useMyVariantInfoURL: 'https://myvariant.info/v1/query?q=',
+                    useMyVariantInfoArgs: '&email=colin.diesh@gmail.com&fields=all',
+                    useEnsemblR2: false,
+                    useEnsemblURL: 'https://rest.ensembl.org/ld/human/',
+                    useEnsemblArgs: '?content-type=application/json;population_name=1000GENOMES:phase_3:KHV',
                     maxFeatureScreenDensity: 50,
-                    style: {
-                        color: function(feature) { return 'hsl(' + (-Math.log(feature.get('score')) * 1.8) + ',50%,50%)'; },
-                        showLabels: false,
-                        strandArrow: false
-                    },
                     onClick: {
-                        content: function(track, feature, featDiv, container) {
-                            var ret;
-                            if (track.config.useMyVariantInfo) {
-                                ret = dojo.xhrGet({
-                                    url: 'http://myvariant.info/v1/query?q=' + feature.get('name'),
+                        action: function (feature) {
+                            var track = this.track;
+                            var d;
+                            if (track.config.useEnsemblR2) {
+                                d = new Dialog({ content: 'Waiting for Ensembl LD REST API...', title: 'GWASViewer' });
+                                d.show();
+                                request(track.config.useEnsemblURL + feature.get('name') + track.config.useEnsemblArgs, {
                                     handleAs: 'json'
-                                }).then(function(res) {
-                                    var feat = thisB.processFeat(res.hits[0]);
+                                }).then(function (res) {
+                                    track.featMap = {};
+                                    res.forEach(function (r) {
+                                        if (r.variation1 === feature.get('name')) {
+                                            track.featMap[r.variation2] = +r.r2;
+                                        } else if (r.variation2 === feature.get('name')) {
+                                            track.featMap[r.variation1] = +r.r2;
+                                        }
+                                    });
+                                    d.set('content', 'Success getting Ensembl LD REST API data!');
+                                    setTimeout(function () {
+                                        d.hide();
+                                    }, 1000);
+                                    track.redraw();
+                                }, function (error) {
+                                    d.set('content', 'Error getting ensembl data, status: ' + (error.response || {}).status + '<br>' + error);
+                                });
+                            } else if (track.config.useMyVariantInfo) {
+                                d = new Dialog({ content: 'Waiting for myvariant.info API...', title: 'GWASViewer' });
+                                d.show();
+                                request(track.config.useMyVariantInfoURL + feature.get('name') + track.config.useMyVariantInfoArgs, {
+                                    handleAs: 'json'
+                                }).then(function (res) {
+                                    var feat = track.processFeat(res.hits[0]);
                                     var content = track.defaultFeatureDetail(track, feat);
-                                    return content;
+                                    d.hide();
+                                    new Dialog({ content: content }).show();
+                                }, function (error) {
+                                    d.set('content', 'Error getting myvariant.info data, status: ' + (error.response || {}).status + '<br>' + error);
                                 });
                             } else {
-                                ret = track.defaultFeatureDetail(track, feature, featDiv, container);
+                                var content = track.defaultFeatureDetail(track, feature);
+                                new Dialog({ content: content }).show();
                             }
-                            return ret;
                         }
+                    },
+                    style: {
+                        color: function (feature, label, glyph, track) {
+                            if (Object.keys(track.featMap).length) {
+                                return 'hsl(' + (track.featMap[feature.get('name')] * 220 || 0) + ',50%,50%)';
+                            }
+                            return 'hsl(' + (-Math.log(feature.get('score')) * 1.8) + ',50%,50%)';
+                        },
+                        showLabels: false,
+                        strandArrow: false
                     }
                 });
         },
-        fillBlock: function(/* args */) {
+        fillBlock: function (/* args */) {
             this.inherited(arguments);
 
             if (this.config.useYAxis) {
@@ -60,14 +103,14 @@ function(
             }
         },
 
-        _getLayout: function() {
+        _getLayout: function () {
             var layout = this.inherited(arguments);
 
             var maxHeight = this.config.maxHeight;
             var heightScaler = this.config.heightScaler;
-            var getScore = this.config.scoreFun || function(data) { return -Math.log(data.get('score')); };
+            var getScore = this.config.scoreFun || function (data) { return -Math.log(data.get('score')); };
             return declare.safeMixin(layout, {
-                addRect: function(id, left, right, height, data) {
+                addRect: function (id, left, right, height, data) {
                     var pLeft   = Math.floor(left   / this.pitchX);
                     var pRight  = Math.floor(right  / this.pitchX);
                     var pHeight = Math.ceil(height / this.pitchY);
@@ -94,7 +137,7 @@ function(
                 }
             });
         },
-        processFeat: function(f) {
+        processFeat: function (f) {
             var start = +f._id.match(/chr.*:g.([0-9]+)/)[1];
             var feature = new SimpleFeature({
                 id: f._id,
@@ -105,14 +148,14 @@ function(
                 }
             });
 
-            var process = function(str, data, plus) {
+            var process = function (str, data, plus) {
                 if (!data) {
                     return;
                 }
 
                 if (str.match(/snpeff/)) {
                     if (lang.isArray(data.ann)) {
-                        array.forEach(data.ann, function(fm, i) { process(str + '_' + i, fm, i); });
+                        array.forEach(data.ann, function (fm, i) { process(str + '_' + i, fm, i); });
                         return;
                     } else if (data.ann) {
                         delete data.ann.cds;
@@ -134,7 +177,7 @@ function(
                     process(str + '_hgvs', data.hgvs);
                     delete data.hgvs;
                     if (lang.isArray(data.rcv)) {
-                        array.forEach(data.rcv, function(elt, i) { process(str + '_rcv' + i, elt); });
+                        array.forEach(data.rcv, function (elt, i) { process(str + '_rcv' + i, elt); });
                     } else {
                         process(str + '_rcv', data.rcv);
                     }
@@ -142,24 +185,24 @@ function(
                 }
                 if (str.match(/grasp/)) {
                     if (lang.isArray(data.publication)) {
-                        array.forEach(data.publication, function(fm, i) { process(str + '_publication' + i, fm); });
+                        array.forEach(data.publication, function (fm, i) { process(str + '_publication' + i, fm); });
                     }
                     delete data.publication;
                 }
 
                 feature.data[str + '_attrs' + (plus || '')] = {};
-                var valkeys = array.filter(Object.keys(data), function(key) {
+                var valkeys = array.filter(Object.keys(data), function (key) {
                     return typeof data[key] !== 'object';
                 });
 
-                var objkeys = array.filter(Object.keys(data), function(key) {
+                var objkeys = array.filter(Object.keys(data), function (key) {
                     return typeof data[key] === 'object' && key !== 'gene';
                 });
 
-                array.forEach(valkeys, function(key) {
+                array.forEach(valkeys, function (key) {
                     feature.data[str + '_attrs' + (plus || '')][key] = data[key];
                 });
-                array.forEach(objkeys, function(key) {
+                array.forEach(objkeys, function (key) {
                     feature.data[str + '_' + key + (plus || '')] = data[key];
                 });
             };

@@ -8,17 +8,31 @@ A JBrowse plugin that adds some custom glyphs for variants and GWAS data
 * heightScaler - Numerical value to collapse or exapand y-axis. By default 1px is 1 unit in -log10(pvalue) units, so making heightScaler: 2 makes smaller -log10(pvalue) scores more visible
 * maxHeight - Numerical value to set track height. Default: 210px
 * showLabels - False by default
-* useMyVariantInfo - Clicking on variant launches myvariant.info popup. Default: false
+* scoreFun - A function to give the score for the graph. Default: "function(feature) { Math.log(feature.get('score')) }", can define similar in config file
 * useYAxis - Shows a y-axis bar. Default: true
 * style->color - A color callback for the variables
 * style->label - A string or callback for the feature label.
-* scoreFun - A function to give the score for the graph. Default: "function(feature) { Math.log(feature.get('score')) }", can define similar in config file
 
-Note for style->label: Can be useful to only show labels above a certain score, e.g. 
+## Fetch API options
+
+* useMyVariantInfo - Clicking on variant launches myvariant.info popup. Default: false
+* useMyVariantInfoURL - Default: 'https://myvariant.info/v1/query?q='
+* useMyVariantInfoArgs - Default: '&fields=all'
+* useEnsemblR2 - Clicking on a variant gets R^2 data from Ensembl REST API
+* useEnsemblURL - Default: 'https://rest.ensembl.org/ld/human'
+* useEnsemblArgs - Default: '?content-type=application/json;population_name=1000GENOMES:phase_3:KHV'
+
+
+## Notes
+
+* It could be useful to only show labels above a certain score for style->label, e.g. 
 
     "style": {
         "label": "function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }"
     }
+
+* The circle glyph is used just for convenience, but it is by nature larger than the actual variant in genome coordinates on the screen, which can cause minor rendering issues like having half circles at block boundaries
+* The useMyVariantInfo and useEnsemblR2 are exclusive to one another, as they both use click action
 
 
 ## Example configuration
@@ -50,7 +64,11 @@ Note you can use flatfile-to-json.pl with --trackType "GWASViewer/View/Track/Var
 
 ![](img/plotter.png)
 
+Basic GWASViewer track
 
+![](img/ensembl.png)
+
+Shows dialog waiting for Ensembl LD REST API which colors variants according to R^2 data when you click on a given variant (the coloring by R^2 is shown underneath the dialog too)
 
 ## Install
 
@@ -62,4 +80,4 @@ Still in beta! Feel free to provide feedback
 
 ## Test data
 
-A sample dataset is in test/data/ go to http://localhost/jbrowse/?data=plugins/GWASViewer/test/data or similar to view
+Test GWASViewer tracks are in the test/data/ directory, visit http://localhost/jbrowse/?data=plugins/GWASViewer/test/data or similar to view

@@ -1,3 +1,7 @@
+# Version 0.3.0
+
+- Allow getting LD R^2 color function from Ensembl
+
 # Version 0.2.0
 
 - Add customizable scoreFun callback function (defaults to Math.log on feature score)

@@ -40,22 +40,22 @@ var profile = {
 
     resourceTags: {
         // Files that contain test code.
-        test: function(/* filename, mid */) {
+        test: function (/* filename, mid */) {
             return false;
         },
 
         // Files that should be copied as-is without being modified by the build system.
-        copyOnly: function(filename, mid) {
+        copyOnly: function (filename, mid) {
             return copyOnly(mid);
         },
 
         // Files that are AMD modules.
-        amd: function(filename, mid) {
+        amd: function (filename, mid) {
             return !copyOnly(mid) && /.js$/.test(filename);
         },
 
         // Files that should not be copied when the “mini” compiler flag is set to true.
-        miniExclude: function(filename, mid) {
+        miniExclude: function (filename, mid) {
             return !(/^GWASViewer/.test(mid));
         }
     }
