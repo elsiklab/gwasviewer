@@ -9,7 +9,16 @@
       "urlTemplate": "tracks/GIANT_BMI_GWAS/{refseq}/trackData.json",
       "label": "GIANT_BMI_GWAS (ensembl r2)",
       "storeClass": "JBrowse/Store/SeqFeature/NCList",
-      "useEnsemblR2": true
+      "useEnsemblR2": true,
+      "style": {"width": 10}
+    },
+    {
+      "type": "GWASViewer/View/Track/VariantPlotter",
+      "urlTemplate": "tracks/GIANT_BMI_GWAS/{refseq}/trackData.json",
+      "label": "GIANT_BMI_GWAS (ensembl r2) [smallfeat]",
+      "storeClass": "JBrowse/Store/SeqFeature/NCList",
+      "useEnsemblR2": true,
+      "style": {"width": 5,"borderColor": ''}
     },
     {
       "type": "GWASViewer/View/Track/VariantPlotter",

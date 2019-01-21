@@ -14,7 +14,7 @@ function(
             var style = pstyle || lang.hitch(this, 'getStyle');
             var top = ptop;
 
-            var height = this._getFeatureHeight(viewInfo, feature);
+            var height = style(feature, 'width') || 10;
             if (!height) {
                 return;
             }

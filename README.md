@@ -12,6 +12,9 @@ A JBrowse plugin that adds some custom glyphs for variants and GWAS data
 * useYAxis - Shows a y-axis bar. Default: true
 * style->color - A color callback for the variables
 * style->label - A string or callback for the feature label.
+* style->width - Size of the circle glyph. Default 10
+* style->borderColor - Default black, set to empty string or null to remove
+
 
 ## Fetch API options
 
@@ -25,7 +28,7 @@ A JBrowse plugin that adds some custom glyphs for variants and GWAS data
 
 ## Notes
 
-* It could be useful to only show labels above a certain score for style->label, e.g. 
+* It could be useful to only show labels above a certain score for style->label, e.g.
 
     "style": {
         "label": "function(feature) { return -Math.log(feature.get('score'))>50 ? feature.get('name') : null; }"

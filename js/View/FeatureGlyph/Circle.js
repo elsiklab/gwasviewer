@@ -11,6 +11,7 @@ function (
     return declare(Box, {
         renderFeature: function (context, fRect) {
             var style = lang.hitch(this, 'getStyle');
+
             this.renderBox(context, fRect.viewInfo, fRect.f, fRect.t, fRect.rect.h, fRect.f, style);
             this.renderLabel(context, fRect);
             this.renderDescription(context, fRect);
@@ -27,11 +28,22 @@ function (
 
             context.beginPath();
             context.lineWidth = 0;
-            context.strokeStyle = style(feature, 'borderColor');
+            var ret = style(feature, 'borderColor');
             context.arc(left + width / 2, top + width / 2, width / 2, 0, 2 * Math.PI, false);
             context.fillStyle = style(feature, 'color');
             context.fill();
-            context.stroke();
-        }
+            if(ret) {
+                context.strokeStyle = ret
+                context.stroke();
+            }
+        },
+
+        _defaultConfig: function() {
+            return this._mergeConfigs(this.inherited(arguments), {
+                style: {
+                    borderColor: 'black'
+                }
+            });
+        },
     });
 });
