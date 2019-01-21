@@ -42,7 +42,7 @@ function (
                     useMyVariantInfoArgs: '&email=colin.diesh@gmail.com&fields=all',
                     useEnsemblR2: false,
                     useEnsemblURL: 'https://rest.ensembl.org/ld/human/',
-                    useEnsemblArgs: '?content-type=application/json;population_name=1000GENOMES:phase_3:KHV',
+                    useEnsemblArgs: '/1000GENOMES:phase_3:ALL?content-type=application/json',
                     maxFeatureScreenDensity: 50,
                     onClick: {
                         action: function (feature) {
