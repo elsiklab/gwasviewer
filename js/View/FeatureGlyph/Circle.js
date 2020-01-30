@@ -11,6 +11,9 @@ function (
     return declare(Box, {
         renderFeature: function (context, fRect) {
             var style = lang.hitch(this, 'getStyle');
+            if (this.track.config.clearRect) {
+                context.clearRect(Math.floor(fRect.l), fRect.t, Math.ceil(fRect.w - Math.floor(fRect.l) + fRect.l), fRect.h);
+            }
 
             this.renderBox(context, fRect.viewInfo, fRect.f, fRect.t, fRect.rect.h, fRect.f, style);
             this.renderLabel(context, fRect);
@@ -32,18 +35,18 @@ function (
             context.arc(left + width / 2, top + width / 2, width / 2, 0, 2 * Math.PI, false);
             context.fillStyle = style(feature, 'color');
             context.fill();
-            if(ret) {
-                context.strokeStyle = ret
+            if (ret) {
+                context.strokeStyle = ret;
                 context.stroke();
             }
         },
 
-        _defaultConfig: function() {
+        _defaultConfig: function () {
             return this._mergeConfigs(this.inherited(arguments), {
                 style: {
                     borderColor: 'black'
                 }
             });
-        },
+        }
     });
 });

@@ -26,11 +26,11 @@ function (
             var thisB = this;
             return Util.deepUpdate(lang.clone(this.inherited(arguments)),
                 {
-                    glyph: function(feat) {
-                        if(feat.get('name') == thisB.curr) {
+                    glyph: function (feat) {
+                        if (feat.get('name') == thisB.curr) {
                             return 'GWASViewer/View/FeatureGlyph/Diamond';
                         }
-                        return 'GWASViewer/View/FeatureGlyph/Circle'
+                        return 'GWASViewer/View/FeatureGlyph/Circle';
                     },
                     maxHeight: 210,
                     width: 10,
@@ -94,7 +94,7 @@ function (
                         color: function (feature, label, glyph, track) {
                             if (Object.keys(track.featMap).length) {
                                 var n = feature.get('name');
-                                if(n == track.curr) {
+                                if (n == track.curr) {
                                     return 'pink';
                                 }
                                 var r = track.featMap[n];
@@ -181,6 +181,7 @@ function (
                     var pHeight = Math.ceil(height / this.pitchY);
 
                     var midX = Math.floor((pLeft + pRight) / 2);
+                    console.log(maxHeight);
                     var y = maxHeight - 10 + (-getScore(data) * heightScaler);
                     this.pTotalHeight = this.maxHeight;
 

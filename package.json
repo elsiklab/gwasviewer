@@ -1,0 +1,16 @@
+{
+  "name": "GWASViewer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:elsiklab/GWASViewer",
+  "author": "Colin <colin.diesh@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint js"
+  },
+  "devDependencies": {
+    "eslint": "^6.3.0",
+    "eslint-config-airbnb-es5": "^1.2.0",
+    "eslint-plugin-react": "^7.14.3"
+  }
+}

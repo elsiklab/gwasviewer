@@ -3,13 +3,13 @@ define([
     'dojo/_base/lang',
     'JBrowse/View/FeatureGlyph/Box'
 ],
-function(
+function (
     declare,
     lang,
     Box
 ) {
     return declare(Box, {
-        renderBox: function(context, viewInfo, feature, ptop, overallHeight, parentFeature, pstyle) {
+        renderBox: function (context, viewInfo, feature, ptop, overallHeight, parentFeature, pstyle) {
             var left  = viewInfo.block.bpToX(feature.get('start'));
             var style = pstyle || lang.hitch(this, 'getStyle');
             var top = ptop;
@@ -37,18 +37,18 @@ function(
                 context.clearRect(left, top, Math.max(1, width), height);
             }
 
-            var borderColor = 'black'; //style(feature, 'borderColor');
+            var borderColor = 'black'; // style(feature, 'borderColor');
             var lineWidth = style(feature, 'borderWidth');
             if (borderColor && lineWidth) {
                 if (width > 3) {
                     context.lineWidth = lineWidth;
                     context.strokeStyle = borderColor;
 
-                   // need to stroke a smaller rectangle to remain within
-                   // the bounds of the feature's overall height and
-                   // width, because of the way stroking is done in
-                   // canvas.  thus the +0.5 and -1 business.
-                   // context.stroke();
+                    // need to stroke a smaller rectangle to remain within
+                    // the bounds of the feature's overall height and
+                    // width, because of the way stroking is done in
+                    // canvas.  thus the +0.5 and -1 business.
+                    // context.stroke();
                     context.beginPath();
                     context.moveTo(left, top + height / 2);
                     context.lineTo(left + Math.max(1, width) / 2, top);
