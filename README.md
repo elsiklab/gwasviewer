@@ -5,7 +5,7 @@ A JBrowse plugin that adds some custom glyphs for variants and GWAS data
 
 ## Options
 
-* heightScaler - Numerical value to collapse or exapand y-axis. By default 1px is 1 unit in -log10(pvalue) units, so making heightScaler: 2 makes smaller -log10(pvalue) scores more visible
+* heightScaler - Numerical value to collapse or exapand y-axis. By default 1px is 1 unit in -log10(pvalue) units, so making heightScaler: 2 makes smaller -log10(pvalue) scores more visible. Note: if your scoreFun is just returning feature.get('score'), make this equal to maxHeight to just be scale between 0.0-1.0
 * maxHeight - Numerical value to set track height. Default: 210px
 * showLabels - False by default
 * scoreFun - A function to give the score for the graph. Default: "function(feature) { Math.log(feature.get('score')) }", can define similar in config file
@@ -14,6 +14,7 @@ A JBrowse plugin that adds some custom glyphs for variants and GWAS data
 * style->label - A string or callback for the feature label.
 * style->width - Size of the circle glyph. Default 10
 * style->borderColor - Default black, set to empty string or null to remove
+* clearRect - runs clear rect after mouseovers. default: false
 
 
 ## Fetch API options
